@@ -20,30 +20,30 @@ def role_playing(model_type=ModelType.GPT_3_5_TURBO, chat_turn_limit=5, request_
         # Default request json
         request_json = {
             "outlet_id": "1",
-            "outlet_location": "Lyon",
-            "central_hub_location": "Paris",
+            "outlet_location": "Delhi",
+            "central_hub_location": "Delhi",
             "date": "2023-12-07T15:04:05Z",
-            "event": "Lavender Festival",
-            "event_description": "The upcoming Lavender Festival in the region is expected to significantly increase the demand for local specialties. We anticipate a higher demand for Olive Oil and Baguette as tourists prefer local culinary experiences. Preparing additional stock of these items is advised to meet the increased customer flow.",
-            "client_preferences": "Customers in Marseille show a strong preference for locally sourced products, with an emphasis on organic and artisanal options. Olive Oil and Baguettes are particularly popular, aligning with regional culinary traditions.",
-            "weather": "rainy",
+            "event": "Deepavali",
+            "event_description": "The upcoming festival is expected to significantly increase the demand for festive foods. We anticipate a higher demand for Ghee and Naan. Preparing additional stock of these items is advised.",
+            "client_preferences": "Customers in Delhi show a strong preference for traditional products. Ghee and Naan are particularly popular.",
+            "weather": "clear",
             "outlet_inventory": {
-                "olive_oil": {
+                "ghee": {
                     "current_storage_amount": 100,
                     "daily_replenishment_without_envent_from_central_hub": 30,
                     "max_warehouse_capacity": 500
                 },
-                "baguette": {
+                "naan": {
                     "current_storage_amount": 200,
                     "daily_replenishment_without_envent_from_central_hub": 50,
                     "max_warehouse_capacity": 300
                 },
-                "manchego_cheese": {
+                "paneer": {
                     "current_storage_amount": 150,
                     "daily_replenishment_without_envent_from_central_hub": 40,
                     "max_warehouse_capacity": 400
                 },
-                "black_tea": {
+                "masala_chai": {
                     "current_storage_amount": 150,
                     "daily_replenishment_without_envent_from_central_hub": 40,
                     "max_warehouse_capacity": 500
@@ -55,19 +55,19 @@ def role_playing(model_type=ModelType.GPT_3_5_TURBO, chat_turn_limit=5, request_
     user_id = request_json["outlet_id"]
     response_json = {
         "outlet_inventory": {
-            "baguette": {
+            "naan": {
                 "future_storage_amount": "<NUM>",
                 "specific_reason_of_replenishment": "<STRING>",
             },
-            "black_tea": {
+            "masala_chai": {
                 "future_storage_amount": "<NUM>",
                 "specific_reason_of_replenishment": "<STRING>",
             },
-            "manchego_cheese": {
+            "paneer": {
                 "future_storage_amount": "<NUM>",
                 "specific_reason_of_replenishment": "<STRING>",
             },
-            "olive_oil": {
+            "ghee": {
                 "future_storage_amount": "<NUM>",
                 "specific_reason_of_replenishment": "<STRING>",
             },
@@ -81,12 +81,13 @@ def role_playing(model_type=ModelType.GPT_3_5_TURBO, chat_turn_limit=5, request_
 The \"historical_daily_replenishment_amount_from_central_hub\" means the average daily replenishment amount from the central hub to the outlet in the past. So it could be used as a reference for the replenishment amount in the future.
 The \"max_warehouse_capacity\" means the maximum capacity of the warehouse of the outlet.
 The \"specific_reason_of_replenishment\" means the specific reason of replenishment for the outlet (the decisions made by the central hub) at present.
-THe current storage amount of the outlet should be less than the maximum capacity of the warehouse of the outlet.
+The current storage amount of the outlet should be less than the maximum capacity of the warehouse of the outlet.
 While making decisions, the central hub should first consider the neccessary information in the context, and then predict what is the unknown demand of outlet in the event.
 """
     task_prompt = "In order to help the outlet to handle the upcoming events well, " + \
         "please make decisions based on the known information (you need to show the basis and the thoughts specifically). " + \
-        "The standard of the task completion is that the AI assistant (Event Logistics Coordinator of Outlet) MUST make sure every BLANKs in the JSON template are filled with sertain values or strings."
+        "The standard of the task completion is that the AI assistant (Event Logistics Coordinator of Outlet) MUST make sure every BLANKs in the JSON template are filled with certain values. " + \
+        "IMPORTANT: If the event description implies higher demand, you MUST increase the 'future_storage_amount' to be significantly higher than 'current_storage_amount'."
 
     answer_template = "===== JSON TEMPLATE =====\n"
     answer_template += json.dumps(response_json, indent=4)
