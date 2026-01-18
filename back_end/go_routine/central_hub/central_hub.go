@@ -168,14 +168,14 @@ func (h *CentralHub) IntegrateAIResponseToGeneralInfo(event string, date time.Ti
 	warehouseProduct := make(map[string]int)
 	for name, item := range aiResponseData.CentralhubStock {
 		switch name {
-		case "antibiotics":
-			name = "Antibiotics"
-		case "vitamins":
-			name = "Vitamins"
-		case "insulin":
-			name = "Insulin"
-		case "paracetamol":
-			name = "Paracetamol"
+		case "naan":
+			name = "Naan"
+		case "masala_chai":
+			name = "Masala Chai"
+		case "paneer":
+			name = "Paneer"
+		case "ghee":
+			name = "Ghee"
 		}
 		warehouseProduct[name] = item.CurrentStorageAmount
 	}
@@ -260,27 +260,27 @@ func (h *CentralHub) HandleEventNotification(outletID string, outletlocation str
 	for name, _ := range shopInventory {
 		// Switch name keys to _
 		switch name {
-		case "Antibiotics":
-			name = "antibiotics"
-		case "Vitamins":
-			name = "vitamins"
-		case "Insulin":
-			name = "insulin"
-		case "Paracetamol":
-			name = "paracetamol"
+		case "Naan":
+			name = "naan"
+		case "Masala Chai":
+			name = "masala_chai"
+		case "Paneer":
+			name = "paneer"
+		case "Ghee":
+			name = "ghee"
 		}
 
 		if ReplenishmentData, exists := aiResponse.ReplenishmentData[name]; exists {
 			// Switch name keys to _
 			switch name {
-			case "antibiotics":
-				name = "Antibiotics"
-			case "vitamins":
-				name = "Vitamins"
-			case "insulin":
-				name = "Insulin"
-			case "paracetamol":
-				name = "Paracetamol"
+			case "naan":
+				name = "Naan"
+			case "masala_chai":
+				name = "Masala Chai"
+			case "paneer":
+				name = "Paneer"
+			case "ghee":
+				name = "Ghee"
 			}
 
 			// future_storage_amount is the TARGET total, not the amount to send

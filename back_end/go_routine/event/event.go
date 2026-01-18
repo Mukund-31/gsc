@@ -10,27 +10,83 @@ type Event struct {
 }
 
 var HolidayMaps = []map[string]*Event{
-	//EVENTS for outlet1 (Mumbai)
+	//EVENTS for outlet1
 	{
-		"Flu Season Peak": &Event{
-			EventDescription: "A surge in seasonal flu cases is being reported across the city. Expect a massive spike in demand for Paracetamol and Antibiotics as doctors prescribe them heavily. Stocking up is critical to prevent shortages.",
-			EventDate:        time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
+		"Christmas": &Event{
+			EventDescription: "The upcoming Lavender Festival in the region is expected to significantly increase the demand for local specialties. We anticipate a higher demand for Olive Oil and Baguette as tourists prefer local culinary experiences. Preparing additional stock of these items is advised to meet the increased customer flow.",
+			EventDate:        time.Date(2023, 12, 25, 0, 0, 0, 0, time.UTC),
 		},
-		"Dengue Outbreak Alert": &Event{
-			EventDescription: "Municipal authorities have issued a Dengue alert. Demand for Paracetamol (for fever management) and Vitamins (for immunity) is expected to rise sharply.",
-			EventDate:        time.Date(2024, 1, 5, 0, 0, 0, 0, time.UTC),
+		//Add Holloween
+		"Halloween": &Event{
+			EventDescription: "As Halloween approaches, there is a notable increase in demand for festive items. Black Tea, known for its warm and comforting qualities, becomes particularly popular during this season. Additionally, Baguette, often used in creative Halloween-themed recipes, is expected to see higher sales. Stocking up on these items is recommended to cater to the seasonal demand.",
+			EventDate:        time.Date(2023, 10, 31, 0, 0, 0, 0, time.UTC),
 		},
-		"Diabetes Awareness Camp": &Event{
-			EventDescription: "A massive free diabetes checkup camp is organized nearby. We anticipate a surge in Insulin sales as new patients are diagnosed.",
-			EventDate:        time.Date(2024, 1, 10, 0, 0, 0, 0, time.UTC),
+		"New Year's Day": &Event{
+			EventDescription: "The celebration of New Year's Day leads to an increased demand for festive items. Products like Black Tea and Olive Oil, often used in traditional New Year's meals, are expected to be in higher demand. Stocking these items in advance is recommended.",
+			EventDate:        time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
 		},
-		"Monsoon Preparation": &Event{
-			EventDescription: "With the monsoon approach, waterborne diseases are a risk. Stock up on Antibiotics and Vitamins to prepare for the season.",
-			EventDate:        time.Date(2024, 1, 15, 0, 0, 0, 0, time.UTC),
+		"Labour Day": &Event{
+			EventDescription: "Labour Day is typically a time for relaxation and family gatherings. There's a surge in demand for comfort foods like Baguette and Olive Oil for home cooking. Preparing additional stock is advisable.",
+			EventDate:        time.Date(2023, 5, 1, 0, 0, 0, 0, time.UTC),
 		},
-		"General Health Drive": &Event{
-			EventDescription: "A government health drive is promoting general wellness. Vitamins and Paracetamol will be in high demand.",
-			EventDate:        time.Date(2024, 1, 20, 0, 0, 0, 0, time.UTC),
+		"Victory in Europe Day": &Event{
+			EventDescription: "This day commemorates the end of WWII in Europe. Traditional celebrations might increase the demand for items like Baguette and Manchego Cheese, which are popular at social gatherings.",
+			EventDate:        time.Date(2023, 5, 8, 0, 0, 0, 0, time.UTC),
+		},
+		"Bastille Day": &Event{
+			EventDescription: "Bastille Day, a national holiday in France, often involves public festivities and private celebrations. Expect higher sales of items like Olive Oil and Baguette, staples in French culinary celebrations.",
+			EventDate:        time.Date(2023, 7, 14, 0, 0, 0, 0, time.UTC),
+		},
+		"Assumption of Mary": &Event{
+			EventDescription: "This religious holiday often involves family gatherings and feasts. Olive Oil and Black Tea, as popular items for such occasions, are likely to see an increase in demand.",
+			EventDate:        time.Date(2023, 8, 15, 0, 0, 0, 0, time.UTC),
+		},
+
+		//Add accident fire
+		"Fire": &Event{
+			EventDescription: "There was a fire in the outlet, and the outlet will be closed for 3 days. So the outlet will not be able to receive the replenishment.",
+			EventDate:        time.Date(2023, 12, 1, 0, 0, 0, 0, time.UTC),
+		},
+
+		"Winter Sale": &Event{
+			EventDescription: "The annual winter sale attracts numerous shoppers. Expect increased sales in warm beverages like Hot Chocolate and Coffee.",
+			EventDate:        time.Date(2023, 1, 5, 0, 0, 0, 0, time.UTC),
+		},
+		"New Year Fitness Rush": &Event{
+			EventDescription: "With the New Year, there's a surge in fitness enthusiasts. Stock up on healthy snacks and energy drinks to cater to this demographic.",
+			EventDate:        time.Date(2023, 1, 10, 0, 0, 0, 0, time.UTC),
+		},
+		"Local Art Exhibit": &Event{
+			EventDescription: "A local art exhibit is drawing in a cultured crowd. Anticipate a higher demand for gourmet coffees and pastries.",
+			EventDate:        time.Date(2023, 1, 15, 0, 0, 0, 0, time.UTC),
+		},
+		"Snow Festival": &Event{
+			EventDescription: "The annual snow festival will increase foot traffic. Stock additional winter gear and hot beverages.",
+			EventDate:        time.Date(2023, 1, 20, 0, 0, 0, 0, time.UTC),
+		},
+		"Book Reading Club": &Event{
+			EventDescription: "A book club meeting at the outlet. Prepare extra seating and offer discounts on tea and coffee.",
+			EventDate:        time.Date(2023, 1, 25, 0, 0, 0, 0, time.UTC),
+		},
+		"Local Musician Performance": &Event{
+			EventDescription: "A popular local musician will perform nearby. Expect increased evening sales.",
+			EventDate:        time.Date(2023, 1, 30, 0, 0, 0, 0, time.UTC),
+		},
+		"Healthy Eating Workshop": &Event{
+			EventDescription: "A workshop on healthy eating is scheduled, which will likely increase interest in organic products and health foods.",
+			EventDate:        time.Date(2023, 1, 7, 0, 0, 0, 0, time.UTC),
+		},
+		"Local Sports Tournament": &Event{
+			EventDescription: "A local sports tournament is expected to draw in a large crowd. Stock up on sports drinks, snacks, and quick meals.",
+			EventDate:        time.Date(2023, 1, 12, 0, 0, 0, 0, time.UTC),
+		},
+		"Community Charity Event": &Event{
+			EventDescription: "A charity event in the community will attract a lot of families. Plan for an increased demand in household essentials and snacks.",
+			EventDate:        time.Date(2023, 1, 18, 0, 0, 0, 0, time.UTC),
+		},
+		"Local Film Festival": &Event{
+			EventDescription: "The local film festival is expected to bring in movie enthusiasts. Enhance stock of popcorn, soft drinks, and movie-themed merchandise.",
+			EventDate:        time.Date(2023, 1, 22, 0, 0, 0, 0, time.UTC),
 		},
 	},
 	//EVENTS for outlet2
