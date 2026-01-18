@@ -36,6 +36,8 @@ class ModelType(Enum):
     LLAMA_2 = "llama-2"
     VICUNA = "vicuna"
     VICUNA_16K = "vicuna-16k"
+    QWEN = "qwen"
+    DEEPSEEK_R1 = "deepseek-r1"
 
     @property
     def value_for_tiktoken(self) -> str:
@@ -67,7 +69,7 @@ class ModelType(Enum):
         Returns:
             bool: Whether this type of models is open-source.
         """
-        if self.name in {"LLAMA_2", "VICUNA", "VICUNA_16K"}:
+        if self.name in {"LLAMA_2", "VICUNA", "VICUNA_16K", "QWEN", "DEEPSEEK_R1"}:
             return True
         else:
             return False
@@ -99,6 +101,10 @@ class ModelType(Enum):
             return 2048
         elif self is ModelType.VICUNA_16K:
             return 16384
+        elif self is ModelType.QWEN:
+            return 32768
+        elif self is ModelType.DEEPSEEK_R1:
+            return 32768
         else:
             raise ValueError("Unknown model type")
 
@@ -119,6 +125,8 @@ class ModelType(Enum):
         elif self is ModelType.LLAMA_2:
             return (self.value in model_name.lower()
                     or "llama2" in model_name.lower())
+        elif self is ModelType.QWEN:
+            return "qwen" in model_name.lower()
         else:
             return self.value in model_name.lower()
 

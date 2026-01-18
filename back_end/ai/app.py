@@ -7,6 +7,7 @@ import threading
 import time
 import websockets
 
+from camel.types import ModelType
 from multi_agent_communication_supply_chain import role_playing, messages_queue
 
 
@@ -65,46 +66,97 @@ central_hub_json = {
 
 app = Flask(__name__)
 
-async def get_message_from_queue(messages_queue):
-    return await asyncio.to_thread(messages_queue.get)
+# Store websockets with their paths: {websocket: path}
+connected_websockets = {}
+messages_queue = messages_queue  # From import
 
-async def send_streaming_message(websocket, path):
+async def broadcast_messages():
+    print("Broadcast task started, waiting for messages...")
     while True:
-        message = await get_message_from_queue(messages_queue)  # Retrieve a message from the queue
-        print(f"The message from the message queue:\n{message}")
+        try:
+            message = await asyncio.to_thread(messages_queue.get, timeout=1)
+        except:
+            # Timeout, just continue checking
+            await asyncio.sleep(0.1)
+            continue
+            
+        sender_id = message["sender_id"]
+        print(f"Broadcasting message for outlet {sender_id} to {len(connected_websockets)} clients")
         if message is None:
             break
-
-        sender_id = message["sender_id"]
+            
         user_message = message["user_message"] + "\n\n"
         assistant_message = message["assistant_message"] + "\n\n"
 
-        for char in user_message:  # user
+        # NOTE: Current logic in multi_agent_communication_supply_chain.py:
+        # user_response (Hub) -> "user_message"
+        # assistant_response (Outlet) -> "assistant_message"
+        
+        # Determine which WebSocket paths should receive this message
+        # Messages for outlet N should go to /messageN
+        target_path = f"/message{sender_id}"
+        
+        chunk_delay = 0.02  # Slow down to 20ms per character for readability
+
+        # Broadcast Hub message (Speaker 0) to relevant clients
+        for char in user_message:
             msg_to_send = {
-                "SpeakerID": sender_id,
-                "ReceiverID": "0",
+                "SpeakerID": "0",  # Hub
+                "ReceiverID": sender_id, # Target Outlet
                 "text": char,
             }
-            time.sleep(0.005)
-            await websocket.send(json.dumps(msg_to_send))
+            json_msg = json.dumps(msg_to_send)
+            for ws, ws_path in list(connected_websockets.items()):
+                # Only send to clients connected to the target outlet's message path
+                if ws_path == target_path:
+                    try:
+                        await ws.send(json_msg)
+                    except Exception as e:
+                        print(f"Error sending to websocket {ws_path}: {e}")
+            await asyncio.sleep(chunk_delay)
 
-        for char in assistant_message:  # assistant
+        # Broadcast Outlet message (Speaker sender_id) to relevant clients
+        for char in assistant_message:
             msg_to_send = {
-                "SpeakerID": "0",
-                "ReceiverID": sender_id,
+                "SpeakerID": sender_id, # Outlet
+                "ReceiverID": "0", # Target Hub
                 "text": char,
             }
-            time.sleep(0.005)
-            await websocket.send(json.dumps(msg_to_send))
+            json_msg = json.dumps(msg_to_send)
+            for ws, ws_path in list(connected_websockets.items()):
+                # Only send to clients connected to the target outlet's message path
+                if ws_path == target_path:
+                    try:
+                        await ws.send(json_msg)
+                    except Exception as e:
+                        print(f"Error sending to websocket {ws_path}: {e}")
+            await asyncio.sleep(chunk_delay)
 
-        messages_queue.task_done()  # Mark the task as done
+        messages_queue.task_done()
+        print(f"Done broadcasting message for outlet {sender_id} to path {target_path}")
+
+async def handle_websocket_connection(websocket):
+    path = websocket.request.path if hasattr(websocket, 'request') else websocket.path
+    print(f"New WebSocket connection from {path}")
+    connected_websockets[websocket] = path
+    print(f"Total connected clients: {len(connected_websockets)}")
+    try:
+        await websocket.wait_closed()
+    finally:
+        if websocket in connected_websockets:
+            del connected_websockets[websocket]
+        print(f"Connection closed from {path}, remaining: {len(connected_websockets)}")
 
 def run_websocket_server():
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    start_server = websockets.serve(functools.partial(send_streaming_message), 'localhost', 8000)
-    loop.run_until_complete(start_server)
-    loop.run_forever()
+    async def main_server():
+        print("Starting WebSocket server on port 8000...")
+        async with websockets.serve(handle_websocket_connection, 'localhost', 8000):
+            print("WebSocket server started!")
+            # Start the broadcast task in background
+            broadcast_task = asyncio.create_task(broadcast_messages())
+            # Keep server running forever
+            await asyncio.Future()
+    asyncio.run(main_server())
 
 # Clenup the chat record, path 'back_end/ai/chat_record'
 def cleanup_chat_record():
@@ -139,8 +191,11 @@ def handle_ai_request():
     global central_hub_json
     try:
         cleanup_chat_record()  # Cleanup the chat record
-        response_json, updated_central_hub_json = role_playing(request_json=request_data, central_hub_json=central_hub_json)
-    except:
+        response_json, updated_central_hub_json = role_playing(request_json=request_data, central_hub_json=central_hub_json, model_type=ModelType.DEEPSEEK_R1, messages_queue=messages_queue)
+    except Exception as e:
+        print(f"Error in role_playing: {e}")
+        import traceback
+        traceback.print_exc()
         # If the role_playing function fails, return a default response
         response_json = {
             "outlet_inventory": {

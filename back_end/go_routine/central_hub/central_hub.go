@@ -246,7 +246,12 @@ func (h *CentralHub) HandleEventNotification(outletID string, outletlocation str
 
 	// Send Request to AI
 	var aiResponse *AIResponse
-	aiResponse, _ = h.SendRequestToAI(requestData)
+	var err error
+	aiResponse, err = h.SendRequestToAI(requestData)
+	if err != nil {
+		log.Printf("Error sending request to AI: %v", err)
+		return nil
+	}
 
 	h.sendGeneralInfoToFrontEnd(h.IntegrateAIResponseToGeneralInfo(eventName, event.EventDate, aiResponse))
 	replenishments := make(map[string]int)
@@ -278,8 +283,13 @@ func (h *CentralHub) HandleEventNotification(outletID string, outletlocation str
 				name = "Olive Oil"
 			}
 
-			quantityNeeded := ReplenishmentData.ChangedReplenishmentAmount
-			if quantityNeeded != 0 {
+			// future_storage_amount is the TARGET total, not the amount to send
+			// Calculate: Amount to Send = Target - Current
+			targetAmount := ReplenishmentData.ChangedReplenishmentAmount
+			currentAmount := shopInventory[name].GetNumber()
+			quantityNeeded := targetAmount - currentAmount
+			
+			if quantityNeeded > 0 {
 				replenishments[name] = quantityNeeded
 				// Directly change the number of products in the central hub according to the AI response
 				h.resources[name].SetNumber(aiResponse.CentralhubStock[name].CurrentStorageAmount)

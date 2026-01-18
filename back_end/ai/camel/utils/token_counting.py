@@ -54,7 +54,7 @@ def messages_to_prompt(messages: List[OpenAIMessage], model: ModelType) -> str:
             else:
                 ret += role
         return ret
-    elif model == ModelType.VICUNA or model == ModelType.VICUNA_16K:
+    elif model == ModelType.VICUNA or model == ModelType.VICUNA_16K or model == ModelType.QWEN or model == ModelType.DEEPSEEK_R1:
         seps = [" ", "</s>"]
         role_map = {"user": "USER", "assistant": "ASSISTANT"}
 

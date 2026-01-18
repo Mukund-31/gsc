@@ -15,7 +15,7 @@ from format_agent import FormatAgent
 messages_queue = queue.Queue()
 
 
-def role_playing(model_type=ModelType.GPT_3_5_TURBO, chat_turn_limit=30, request_json=None, central_hub_json=None) -> None:
+def role_playing(model_type=ModelType.GPT_3_5_TURBO, chat_turn_limit=5, request_json=None, central_hub_json=None, messages_queue=None) -> None:
     if request_json is None:
         # Default request json
         request_json = {
@@ -101,12 +101,34 @@ While making decisions, the central hub should first consider the neccessary inf
 
     # You can use the following code to play the role-playing game
     function_list = [*MATH_FUNCS]
-    assistant_model_config = FunctionCallingConfig.from_openai_function_list(
-        function_list=function_list,
-        kwargs=dict(temperature=0.7),
-    )
-    assistant_model_config = ChatGPTConfig(temperature=0.7)
-    user_model_config = ChatGPTConfig(temperature=0.7)
+    
+    if model_type.is_open_source:
+        from camel.configs import OpenSourceConfig
+        if model_type == ModelType.DEEPSEEK_R1:
+            model_path = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"  # For tokenizer
+        elif model_type == ModelType.QWEN:
+            model_path = "Qwen/Qwen2.5-0.5B"
+        else:
+            model_path = "vicuna-7b-v1.5"
+        server_url = "http://localhost:11434/v1"
+        assistant_model_config = OpenSourceConfig(
+            model_path=model_path,
+            server_url=server_url,
+            api_params=ChatGPTConfig(temperature=0.7),
+        )
+        user_model_config = OpenSourceConfig(
+            model_path=model_path,
+            server_url=server_url,
+            api_params=ChatGPTConfig(temperature=0.7),
+        )
+    else:
+        assistant_model_config = FunctionCallingConfig.from_openai_function_list(
+            function_list=function_list,
+            kwargs=dict(temperature=0.7),
+        )
+        assistant_model_config = ChatGPTConfig(temperature=0.7)
+        user_model_config = ChatGPTConfig(temperature=0.7)
+
     sys_msg_meta_dicts = [
         dict(
             assistant_role=ai_assistant_role, user_role=ai_user_role,
@@ -167,8 +189,63 @@ While making decisions, the central hub should first consider the neccessary inf
             f.write(f"[{ai_user_role}]:\n\n{user_msg_md}\n\n\n")
             f.write(f"[{ai_assistant_role}]:\n\n{assistant_msg_md}\n\n\n")
 
-        messages_queue.put({"sender_id": user_id, "user_message": user_response.msg.content, "assistant_message": assistant_response.msg.content})
-        print(Fore.WHITE + f"The length of the messages_queue is {messages_queue.qsize()}\n")
+        if messages_queue:
+             # Filter out technical content - only send clean conversation
+             def clean_message(msg):
+                 import re
+                 
+                 # Remove <think>...</think> blocks but keep what comes after
+                 msg = re.sub(r'<think>.*?</think>', '', msg, flags=re.DOTALL)
+                 
+                 # Remove JSON code blocks
+                 msg = re.sub(r'```json.*?```', '', msg, flags=re.DOTALL)
+                 
+                 # Extract key decision phrases
+                 decision_keywords = ['order', 'replenish', 'stock', 'maintain', 'monitor', 'strategy', 'plan']
+                 
+                 lines = msg.split('\n')
+                 decision_lines = []
+                 
+                 for line in lines:
+                     stripped = line.strip()
+                     
+                     # Skip empty, JSON, or technical lines
+                     if not stripped or stripped.startswith(('{', '}', '"', '#', '**', '===', 'Instruction', 'Input', 'Output')):
+                         continue
+                     
+                     # Skip lines that are mostly JSON-like
+                     if ':' in stripped and '"' in stripped:
+                         continue
+                     
+                     # Keep lines with decision keywords or substantial content
+                     if any(keyword in stripped.lower() for keyword in decision_keywords) or len(stripped) > 30:
+                         # Clean up markdown formatting
+                         cleaned = re.sub(r'\*\*', '', stripped)
+                         decision_lines.append(cleaned)
+                 
+                 # If we have decision lines, return them
+                 if decision_lines:
+                     result = '\n'.join(decision_lines[:8])  # Max 8 lines
+                     return result[:600]  # Max 600 chars
+                 
+                 # Fallback: return first substantial paragraph
+                 paragraphs = [p.strip() for p in msg.split('\n\n') if len(p.strip()) > 50]
+                 if paragraphs:
+                     return paragraphs[0][:400]
+                 
+                 return msg.strip()[:300] if msg.strip() else "[Processing...]"
+             
+             user_clean = clean_message(user_response.msg.content)
+             assistant_clean = clean_message(assistant_response.msg.content)
+             
+             # Only send if there's actual content after filtering
+             if user_clean or assistant_clean:
+                 messages_queue.put({
+                     "sender_id": user_id, 
+                     "user_message": user_clean if user_clean else "[Processing...]", 
+                     "assistant_message": assistant_clean if assistant_clean else "[Analyzing...]"
+                 })
+                 print(Fore.WHITE + f"The length of the messages_queue is {messages_queue.qsize()}\n")
 
         chat_record += (f"[{ai_user_role}]:{user_response.msg.content}\n\n" + \
             f"[{ai_assistant_role}]:{assistant_response.msg.content}\n\n")
@@ -176,7 +253,10 @@ While making decisions, the central hub should first consider the neccessary inf
         if "CAMEL_TASK_DONE" in user_response.msg.content or \
             "CAMEL_TASK_DONE" in assistant_response.msg.content:
 
-            format_agent = FormatAgent(model_type=ModelType.GPT_4_TURBO, model_config=ChatGPTConfig(temperature=0.0))  # To make the output more readable, we use GPT-4 only
+            if model_type.is_open_source:
+                 format_agent = FormatAgent(model_type=model_type, model_config=assistant_model_config)
+            else:
+                 format_agent = FormatAgent(model_type=ModelType.GPT_4_TURBO, model_config=ChatGPTConfig(temperature=0.0))  # To make the output more readable, we use GPT-4 only
             output_text = format_agent.run(
                 user_role_name=ai_user_role,
                 assistant_role_name=ai_assistant_role,

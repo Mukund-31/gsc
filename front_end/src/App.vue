@@ -1,6 +1,5 @@
 <template>
   <header>
-    <img class="utc" alt="utc logo" src="@/assets/utc_logo.jpg" />
     <h1 class="title">Responsive AI Clusters in Supply Chain</h1>
     <button @click="start" class="btn">Start</button>
   </header>
@@ -28,7 +27,7 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2">Auchan</th>
+              <th colspan="2">Outlet 1</th>
             </tr>
           </thead>
           <tbody>
@@ -43,7 +42,7 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2">Carrefour</th>
+              <th colspan="2">Outlet 2</th>
             </tr>
           </thead>
           <tbody>
@@ -58,7 +57,7 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2">Monoprix</th>
+              <th colspan="2">Outlet 3</th>
             </tr>
           </thead>
           <tbody>
@@ -73,7 +72,7 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2">Normal</th>
+              <th colspan="2">Outlet 4</th>
             </tr>
           </thead>
           <tbody>
@@ -87,16 +86,16 @@
     </div>
     <div class="communication">
       <button @click="toggleMessages1(1)" class="toggle-button show1">
-        Auchan Messages
+        Outlet 1
       </button>
       <button @click="toggleMessages2(1)" class="toggle-button show2">
-        Carrefour Messages
+        Outlet 2 
       </button>
       <button @click="toggleMessages3(1)" class="toggle-button show3">
-        Monoprix Messages
+        Outlet 3 
       </button>
       <button @click="toggleMessages4(1)" class="toggle-button show4">
-        Normal Messages
+        Outlet 4
       </button>
       <div class="event">
         <p class="event1">{{ event1 }}</p>
@@ -498,8 +497,29 @@ export default {
             countdownValue -= 1;
             boxe.text(countdownValue + " day left");
 
-            if (countdownValue === 0) {
+            if (countdownValue <= 0) {
               clearInterval(countdownTimer);
+              
+              // Update the local stock table when delivery arrives
+              let targetStock = null;
+              if (supermarketInfo.outletID == "1") targetStock = this.stock1;
+              else if (supermarketInfo.outletID == "2") targetStock = this.stock2;
+              else if (supermarketInfo.outletID == "3") targetStock = this.stock3;
+              else if (supermarketInfo.outletID == "4") targetStock = this.stock4;
+              
+              if (targetStock) {
+                // Get current amount (or 0 if missing)
+                let currentAmount = targetStock.get(key) || 0;
+                // Add delivered amount
+                let newAmount = currentAmount + value;
+                // Update the map (Vue 3 reactivity needs reassignment or Map set)
+                targetStock.set(key, newAmount);
+                // Force update if needed (Map reactivity can be tricky in some Vue versions)
+                if (supermarketInfo.outletID == "1") this.stock1 = new Map(targetStock);
+                else if (supermarketInfo.outletID == "2") this.stock2 = new Map(targetStock);
+                else if (supermarketInfo.outletID == "3") this.stock3 = new Map(targetStock);
+                else if (supermarketInfo.outletID == "4") this.stock4 = new Map(targetStock);
+              }
             }
           }, this.onedaytime);
 
@@ -746,7 +766,7 @@ export default {
       this.message1 = new WebSocket("ws://localhost:8000/message1");
       this.message1.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if (data.SpeakerID == "1") {
+        if (data.SpeakerID == "1" || (data.SpeakerID == "0" && data.ReceiverID == "1")) {
           this.messages1_text.push({
             id: this.nextMsgId1++,
             text: data.text,
@@ -774,7 +794,7 @@ export default {
       this.message2 = new WebSocket("ws://localhost:8000/message2");
       this.message2.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if (data.SpeakerID == "2") {
+        if (data.SpeakerID == "2" || (data.SpeakerID == "0" && data.ReceiverID == "2")) {
           this.messages2_text.push({
             id: this.nextMsgId2++,
             text: data.text,
@@ -802,7 +822,7 @@ export default {
       this.message3 = new WebSocket("ws://localhost:8000/message3");
       this.message3.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if (data.SpeakerID == "3") {
+        if (data.SpeakerID == "3" || (data.SpeakerID == "0" && data.ReceiverID == "3")) {
           this.messages3_text.push({
             id: this.nextMsgId3++,
             text: data.text,
@@ -829,7 +849,7 @@ export default {
       this.message4 = new WebSocket("ws://localhost:8000/message4");
       this.message4.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if (data.SpeakerID == "4") {
+        if (data.SpeakerID == "4" || (data.SpeakerID == "0" && data.ReceiverID == "4")) {
           this.messages4_text.push({
             id: this.nextMsgId4++,
             text: data.text,

@@ -3,6 +3,7 @@ package outlet
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"sync"
 	"time"
@@ -52,9 +53,10 @@ func InstanceOutlets() {
 		// Use the indices to add products to the outlet's inventory.
 		for _, idx := range indices {
 			productCopy := product.GlobalProducts[idx]
-			// Set the number of products in the outlet's inventory to x,
-			// where x is the number of products in the central hub's inventory.
-			inventory[productCopy.GetProductID()].SetNumber(productCopy.GetNumber())
+			// Randomize initial stock between 0 and 50% of max capacity
+			// to create variety in AI replenishment needs
+			randStock := rand.Intn(productCopy.GetMax_stock() / 2)
+			inventory[productCopy.GetProductID()].SetNumber(randStock)
 		}
 
 		// Create a new outlet with the defined ID, location, and inventory.
@@ -116,6 +118,7 @@ var (
 )
 
 func INIT() { // the singleton pattern
+	rand.Seed(time.Now().UnixNano())
 	centralhub.InitializeHub()
 	product.InstanceProducts()
 	InstanceOutlets()
@@ -293,7 +296,9 @@ func (o *Outlet) CheckAndNotify(date time.Time) {
 		response = o.notifyCentralHub(o.GetOutletID(), o.GetLocation(), o.clientPreferences, eventName, eventDetails, o.inventory)
 	}
 	o.ProcessScheduledDeliveries(date)
-	o.scheduleDeliveries(response, date)
+	if response != nil {
+		o.scheduleDeliveries(response, date)
+	}
 	// Send the json pack SupermarketInfo to frontend
 
 	o.SendSupermarketInfoToFrontend(o.IntegrateResponseToSupermarketInfo(eventName, response))

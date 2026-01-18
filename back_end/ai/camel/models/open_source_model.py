@@ -56,6 +56,11 @@ class OpenSourceModel(BaseModelBackend):
 
         # Check whether the model name matches the model type
         self.model_name: str = self.model_path.split('/')[-1]
+        if self.model_type == ModelType.QWEN:
+            self.model_name = "qwen2.5:0.5b"
+        elif self.model_type == ModelType.DEEPSEEK_R1:
+            self.model_name = "deepseek-r1:1.5b"
+        
         if not self.model_type.validate_model_name(self.model_name):
             raise ValueError(
                 f"Model name `{self.model_name}` does not match model type "
@@ -72,6 +77,7 @@ class OpenSourceModel(BaseModelBackend):
             base_url=self.server_url,
             timeout=60,
             max_retries=3,
+            api_key="EMPTY",
         )
 
         # Replace `model_config_dict` with only the params to be
