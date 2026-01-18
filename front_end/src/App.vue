@@ -458,10 +458,10 @@ export default {
       }
       /*
       Product name        Color
-      "Ghee"       : red
-      "Naan"        : blue
-      "Paneer" : green
-      "Masala Chai"       : orange
+      "Olive Oil"       : red
+      "Baguette"        : blue
+      "Manchego Cheese" : green
+      "Black Tea"       : orange
       */
       Object.entries(supermarketInfo.productAdd).forEach((table) => {
         let key = table[0];

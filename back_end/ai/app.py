@@ -199,34 +199,34 @@ def handle_ai_request():
         # If the role_playing function fails, return a default response
         response_json = {
             "outlet_inventory": {
-                "naan": {
+                "baguette": {
                     "future_storage_amount": 50,
                     "specific_reason_of_replenishment": "to meet the moderate demand as per the client\"s preferences"
                 },
-                "masala_chai": {
+                "black_tea": {
                     "future_storage_amount": 20,
                     "specific_reason_of_replenishment": "to maintain a minimal stock level due to the client\"s minimal interest"
                 },
-                "paneer": {
+                "manchego_cheese": {
                     "future_storage_amount": 40,
                     "specific_reason_of_replenishment": "to meet the strong demand as per the client\"s preferences"
                 },
-                "ghee": {
+                "olive_oil": {
                     "future_storage_amount": 30,
                     "specific_reason_of_replenishment": "to meet the strong demand as per the client\"s preferences"
                 }
             },
             "central_hub_inventory": {
-                "naan": {
+                "baguette": {
                     "current_storage_amount": 530
                 },
-                "masala_chai": {
+                "black_tea": {
                     "current_storage_amount": 364
                 },
-                "paneer": {
+                "manchego_cheese": {
                     "current_storage_amount": 530
                 },
-                "ghee": {
+                "olive_oil": {
                     "current_storage_amount": 180
                 }
             },
@@ -234,16 +234,16 @@ def handle_ai_request():
         }
         updated_central_hub_json = {
             "central_hub_inventory": {
-                "naan": {
+                "baguette": {
                     "current_storage_amount": 530
                 },
-                "masala_chai": {
+                "black_tea": {
                     "current_storage_amount": 364
                 },
-                "paneer": {
+                "manchego_cheese": {
                     "current_storage_amount": 530
                 },
-                "ghee": {
+                "olive_oil": {
                     "current_storage_amount": 180
                 }
             }

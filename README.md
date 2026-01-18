@@ -1,39 +1,44 @@
-# Responsive AI Clusters in Supply Chain - India Edition 🇮🇳
+# Responsive AI Clusters in Supply Chain (India Edition)
 
-A sophisticated multi-agent system simulating an autonomous supply chain in **India**. The system uses two AI agents powered by **DeepSeek-R1** (via Ollama) to make real-time inventory management decisions based on simulated events.
+A sophisticated multi-agent system simulating an autonomous supply chain in an Indian context. The system uses AI agents powered by **DeepSeek-R1** (via Ollama) to make real-time inventory management decisions based on simulated events in major Indian cities.
 
 ## 🚀 Project Overview
 
-The project simulates a supply chain network with a **Central Hub in Hyderabad** and multiple **Outlets (Mumbai, Delhi, Bangalore, Kolkata)**. When events occur (e.g., "Diwali", "New Year's"), the system triggers a multi-agent AI conversation to replenish Indian grocery items.
+This project simulates a supply chain network with a Central Hub and multiple Outlets (Delhi, Mumbai, Bangalore, Kolkata). When localized events occur (e.g., "Deepavali Rush", "Monsoon Season"), the system triggers a multi-agent AI conversation to determine optimal inventory replenishment strategies for items like Naan, Ghee, Paneer, and Masala Chai.
 
 ### Key Components
 
 1.  **Frontend (Vue.js + D3.js)**: 
-    -   Visualizes the map of India (simulated), inventory levels, and transportation.
-    -   Displays real-time AI agent conversations.
-    -   Items: **Ghee, Naan, Paneer, Masala Chai**.
+    -   Visualizes the supply chain map, inventory levels, and transportation of goods.
+    -   Displays real-time AI agent conversations and reasoning.
+    -   **Indian Localization**: Visual assets mapped to Indian staples (e.g., Oil -> Ghee, Bread -> Naan).
     
 2.  **Go Backend (Simulation Engine)**:
-    -   Manages the physical world state (inventory, events, time).
+    -   Manages the physical world state (inventory in Delhi, Mumbai, etc.).
     -   Handles logistics and delivery scheduling.
-    
+    -   Communicates with the AI backend to request decisions.
+
 3.  **Python AI Backend (Intelligence Core)**:
     -   Powered by **DeepSeek-R1:1.5b** (Reasoning Model).
     -   Uses the **CAMEL** framework (Communicative Agents for "Mind" Exploration of Large Language Model Society).
-    -   **Agents**:
-        1.  **Hub Manager (Hyderabad)**: Suggests stock adjustments.
-        2.  **Outlet Coordinator (City)**: Calculates order quantities.
+    -   Orchestrates autonomous dialogue between two agents:
+        1.  **Hub Manager**: Suggests stock adjustments based on global storage.
+        2.  **Outlet Coordinator**: Determines specific order quantities based on local events.
 
 ## 🤖 AI Agents & Communication Protocol
 
-The system implements a **Role-Playing** session using the CAMEL framework.
+The core intelligence relies on a Role-Playing mechanism where two AI agents collaborate to solve the inventory problem.
+
+### The Protocol (CAMEL Framework)
+The system implements a **Role-Playing** session where agents exchange messages to fulfill a specific task.
 
 -   **Initiator**: The Go backend detects an event and sends a JSON payload to the Python backend.
 -   **Agent 1 (User Role)**: `Inventory Management Specialist of Central Hub`
-    -   *Responsibility*: Analyzes demand for items like **Masala Chai** and **Paneer** based on local festivals.
+    -   *Responsibility*: Analyzes the event description and Central Hub's available stock. Suggests a replenishment strategy.
 -   **Agent 2 (Assistant Role)**: `Event Logistics Coordinator of Outlet`
-    -   *Responsibility*: Calculates precise replenishment numbers.
--   **Handshake**: The agents iterate (up to 5 turns) to refine the plan before returning the final JSON.
+    -   *Responsibility*: Calculates precise replenishment numbers (e.g., "Order 50 Naan"). Fills the structured JSON response.
+-   **Model**: `DeepSeek-R1:1.5b` running locally via Ollama. It uses "Chain of Thought" reasoning (visible in logs) to derive decisions.
+-   **Handshake**: The agents iterate (up to 5 turns) to refine the plan before returning the final JSON to the Go simulation engine.
 
 ### Data Flow
 1.  **Event Trigger**: Go Simulation -> Python AI (`POST /ai`)
@@ -100,23 +105,33 @@ npm run serve
 1.  Open your browser to `http://localhost:8080`.
 2.  Click the **Start** button in the top right.
 3.  Watch as:
-    -   Events trigger AI conversations.
-    -   **Ghee** and **Naan** are transported from **Hyderabad** to outlets like **Mumbai**.
+    -   Time progresses in the simulation.
+    -   Events (like "New Year's Day") trigger agent conversations in the message boxes.
+    -   AI agents decide on inventory numbers for Indian products.
+    -   Goods are physically transported (animated boxes) from the Hub to Outlets.
     -   Inventory tables update automatically upon delivery arrival.
 
 ## 📂 Project Structure
 
 ```
 ├── back_end
-│   ├── ai               # Python: AI Agents, Flask App
+│   ├── ai               # Python: AI Agents, Flask App, WebSockets
+│   │   ├── camel        # CAMEL Multi-Agent Framework implementation
+│   │   └── app.py       # Main entry point for AI service
 │   └── go_routine       # Go: Simulation Engine
+│       ├── central_hub  # Hub logic
+│       ├── outlet       # Outlet logic
+│       └── main.go      # Entry point for Simulation
 ├── front_end            # Vue.js Application
+│   ├── src
+│   │   └── App.vue      # Main UI and Visualization logic
+│   └── public
 └── setup_env.sh         # Environment setup script
 ```
 
 ## 🤝 Contributing
 1.  Fork the repository.
-2.  Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the branch (`git push origin feature/AmazingFeature`).
+2.  Create your feature branch (`git checkout -b feature/IndianLocalization`).
+3.  Commit your changes (`git commit -m 'Add localization'`).
+4.  Push to the branch (`git push origin feature/IndianLocalization`).
 5.  Open a Pull Request.

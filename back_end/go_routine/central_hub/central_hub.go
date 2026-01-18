@@ -110,7 +110,7 @@ func (h *CentralHub) SetInventory(inventory map[string]*product.Product) {
 	h.resources = inventory
 }
 func InitializeHub() {
-	GetHubInstance("Central Hub", "Hyderabad")
+	GetHubInstance("Central Hub", "Paris")
 	inventory := make(map[string]*product.Product)
 
 	// Initialize the inventory
@@ -168,12 +168,20 @@ func (h *CentralHub) IntegrateAIResponseToGeneralInfo(event string, date time.Ti
 	warehouseProduct := make(map[string]int)
 	for name, item := range aiResponseData.CentralhubStock {
 		switch name {
+		case "baguette": // Keeping for backward compatibility if needed, but primarily for handling AI resp
+			name = "Naan"
 		case "naan":
 			name = "Naan"
+		case "black_tea":
+			name = "Masala Chai"
 		case "masala_chai":
 			name = "Masala Chai"
+		case "manchego_cheese":
+			name = "Paneer"
 		case "paneer":
 			name = "Paneer"
+		case "olive_oil":
+			name = "Ghee"
 		case "ghee":
 			name = "Ghee"
 		}
