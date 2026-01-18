@@ -114,10 +114,10 @@ func InitializeHub() {
 	inventory := make(map[string]*product.Product)
 
 	// Initialize the inventory
-	inventory["Olive Oil"] = product.NewProduct("Olive Oil", 1000, 30, 500)
-	inventory["Baguette"] = product.NewProduct("Baguette", 2000, 50, 300)
-	inventory["Manchego Cheese"] = product.NewProduct("Manchego Cheese", 1500, 40, 400)
-	inventory["Black Tea"] = product.NewProduct("Black Tea", 800, 20, 250)
+	inventory["Ghee"] = product.NewProduct("Ghee", 1000, 30, 500)
+	inventory["Naan"] = product.NewProduct("Naan", 2000, 50, 300)
+	inventory["Paneer"] = product.NewProduct("Paneer", 1500, 40, 400)
+	inventory["Masala Chai"] = product.NewProduct("Masala Chai", 800, 20, 250)
 
 	// Start the WebSocket server
 	http.HandleFunc("/centralhub", instance.HandleWebSocket)
