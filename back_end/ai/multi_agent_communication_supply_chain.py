@@ -270,12 +270,60 @@ While making decisions, the central hub should first consider the neccessary inf
             output_text = re.sub(r'(\w)"(\w)', r'\1\"\2', output_text)
             print(Fore.BLUE + f"output_text:\n{output_text}\n")
 
-            # Extract the json format in the output_text, while the output_text is a string including the json format and other strings
-            role_playing_output_json = json.loads(re.search(r'{.*}', output_text, re.DOTALL).group())
+            # Extract the json format in the output_text
+            # Robust extraction logic to find the JSON block containing "outlet_inventory"
+            try:
+                # Find the position of "outlet_inventory"
+                key_pos = output_text.find('"outlet_inventory"')
+                if key_pos == -1:
+                    raise ValueError("outlet_inventory not found")
+                
+                # Find the nearest opening brace before the key
+                start_pos = output_text.rfind('{', 0, key_pos)
+                if start_pos == -1:
+                    raise ValueError("Opening brace not found")
+                
+                # Try to parse from start_pos to the end, handling potential trailing text
+                # We'll try to find the matching closing brace by incrementally shortening from the end
+                candidate = output_text[start_pos:]
+                found_json = None
+                
+                # Clean up markdown code blocks if present
+                candidate = candidate.strip().replace('```json', '').replace('```', '')
+                
+                # First try direct parse
+                try:
+                    found_json = json.loads(candidate)
+                except json.JSONDecodeError:
+                    # If failed, try to find the last closing brace and slice
+                    last_brace = candidate.rfind('}')
+                    while last_brace != -1:
+                        try:
+                            sub_candidate = candidate[:last_brace+1]
+                            found_json = json.loads(sub_candidate)
+                            break
+                        except json.JSONDecodeError:
+                            last_brace = candidate.rfind('}', 0, last_brace)
+                
+                if found_json:
+                    role_playing_output_json = found_json
+                else:
+                    # Fallback to regex
+                    role_playing_output_json = json.loads(re.search(r'\{.*"outlet_inventory".*\}', output_text, re.DOTALL).group())
+
+            except Exception as e:
+                print(Fore.RED + f"JSON Parsing Error: {e}")
+                # Last resort fallback
+                role_playing_output_json = json.loads(re.search(r'{.*}', output_text, re.DOTALL).group())
+
             print(Fore.BLUE + f"role_playing_output_json:\n{json.dumps(role_playing_output_json, indent=4)}\n")
             try:
-                role_playing_output_json["transportation_duration"] = [int(s) for s in role_playing_output_json["transportation_duration"].split() if s.isdigit()][0]
-                if role_play_session["transportation_duration"] >= 7:
+                # Handle numeric extraction if needed
+                if isinstance(role_playing_output_json.get("transportation_duration"), str):
+                     nums = [int(s) for s in role_playing_output_json["transportation_duration"].split() if s.isdigit()]
+                     role_playing_output_json["transportation_duration"] = nums[0] if nums else 1
+                
+                if role_playing_output_json.get("transportation_duration", 1) >= 7:
                     role_playing_output_json["transportation_duration"] = 3
             except:
                 role_playing_output_json["transportation_duration"] = 1

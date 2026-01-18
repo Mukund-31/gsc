@@ -53,7 +53,8 @@ class FormatAgent(ChatAgent):
         self.reset()
 
         format_generation_prompt = """You are a format agent. You are asked to generate the answer according to the CHAT RECORD and the ANSWER TEMPLATE. According to the chat record, you should analyze the chat record and extract the relevant information in order to fulfill the ANSWER TEMPLATE.
-Your answer MUST strictly adhere to the structure of ANSWER TEMPLATE, ONLY fill in the BLANKs, and DO NOT alter or modify any other part of the template.
+Your answer MUST strictly adhere to the structure of ANSWER TEMPLATE, ONLY fill in the BLANKs.
+IMPORTANT: Output RAW JSON ONLY. Do not include markdown formatting (like ```json), explanations, or any other text.
 """
 
         chat_record_prompt = TextPrompt("""===== CHAT RECORD =====
