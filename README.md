@@ -1,4 +1,5 @@
-# Responsive AI Clusters in Supply Chain - India Edition 🇮🇳
+# Responsive AI Clusters in Supply Chain
+
 
 A sophisticated multi-agent system simulating an autonomous supply chain in **India**. The system uses two AI agents powered by **DeepSeek-R1** (via Ollama) to make real-time inventory management decisions based on simulated events.
 
