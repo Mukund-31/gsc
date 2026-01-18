@@ -37,7 +37,7 @@ func InstanceOutlets() {
 	}
 
 	// Define 4 locations for each outlet.
-	outletLocations := []string{"Paris", "Lyon", "Marseille", "Nice"}
+	outletLocations := []string{"Mumbai", "Delhi", "Bangalore", "Kolkata"}
 
 	// Clear the allOutlets
 	allOutlets = []*Outlet{}

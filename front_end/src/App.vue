@@ -27,7 +27,7 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2">Mumbai</th>
+              <th colspan="2">Outlet 1</th>
             </tr>
           </thead>
           <tbody>
@@ -42,7 +42,7 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2">Delhi</th>
+              <th colspan="2">Outlet 2</th>
             </tr>
           </thead>
           <tbody>
@@ -57,7 +57,7 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2">Bangalore</th>
+              <th colspan="2">Outlet 3</th>
             </tr>
           </thead>
           <tbody>
@@ -72,7 +72,7 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2">Kolkata</th>
+              <th colspan="2">Outlet 4</th>
             </tr>
           </thead>
           <tbody>
@@ -86,16 +86,16 @@
     </div>
     <div class="communication">
       <button @click="toggleMessages1(1)" class="toggle-button show1">
-        Mumbai (AI Chat)
+        Outlet 1
       </button>
       <button @click="toggleMessages2(1)" class="toggle-button show2">
-        Delhi (AI Chat)
+        Outlet 2 
       </button>
       <button @click="toggleMessages3(1)" class="toggle-button show3">
-        Bangalore (AI Chat) 
+        Outlet 3 
       </button>
       <button @click="toggleMessages4(1)" class="toggle-button show4">
-        Kolkata (AI Chat)
+        Outlet 4
       </button>
       <div class="event">
         <p class="event1">{{ event1 }}</p>
@@ -458,10 +458,10 @@ export default {
       }
       /*
       Product name        Color
-      "Olive Oil"       : red
-      "Baguette"        : blue
-      "Manchego Cheese" : green
-      "Black Tea"       : orange
+      "Ghee"       : red
+      "Naan"        : blue
+      "Paneer" : green
+      "Masala Chai"       : orange
       */
       Object.entries(supermarketInfo.productAdd).forEach((table) => {
         let key = table[0];

@@ -110,7 +110,7 @@ func (h *CentralHub) SetInventory(inventory map[string]*product.Product) {
 	h.resources = inventory
 }
 func InitializeHub() {
-	GetHubInstance("Central Hub", "Paris")
+	GetHubInstance("Central Hub", "Hyderabad")
 	inventory := make(map[string]*product.Product)
 
 	// Initialize the inventory
