@@ -140,34 +140,34 @@ export default {
   data() {
     return {
       stock0: new Map([
-        ["Naan", 0],
-        ["Masala Chai", 0],
-        ["Paneer", 0],
-        ["Ghee", 0],
+        ["Antibiotics", 0],
+        ["Vitamins", 0],
+        ["Insulin", 0],
+        ["Paracetamol", 0],
       ]),
       stock1: new Map([
-        ["Naan", 0],
-        ["Masala Chai", 0],
-        ["Paneer", 0],
-        ["Ghee", 0],
+        ["Antibiotics", 0],
+        ["Vitamins", 0],
+        ["Insulin", 0],
+        ["Paracetamol", 0],
       ]),
       stock2: new Map([
-        ["Naan", 0],
-        ["Masala Chai", 0],
-        ["Paneer", 0],
-        ["Ghee", 0],
+        ["Antibiotics", 0],
+        ["Vitamins", 0],
+        ["Insulin", 0],
+        ["Paracetamol", 0],
       ]),
       stock3: new Map([
-        ["Naan", 0],
-        ["Masala Chai", 0],
-        ["Paneer", 0],
-        ["Ghee", 0],
+        ["Antibiotics", 0],
+        ["Vitamins", 0],
+        ["Insulin", 0],
+        ["Paracetamol", 0],
       ]),
       stock4: new Map([
-        ["Naan", 0],
-        ["Masala Chai", 0],
-        ["Paneer", 0],
-        ["Ghee", 0],
+        ["Antibiotics", 0],
+        ["Vitamins", 0],
+        ["Insulin", 0],
+        ["Paracetamol", 0],
       ]),
       onedaytime: 60000, // 60s/day
       date: null,
@@ -523,7 +523,7 @@ export default {
             }
           }, this.onedaytime);
 
-          if (key == "Ghee") {
+          if (key == "Insulin") {
             const boxa = this.svg
               .append("image")
               .attr("x", this.warehouse.x + size)
@@ -556,7 +556,7 @@ export default {
               .attr("y", target.y + 2.3 * size)
               .on("end", () => boxat.remove());
           }
-          if (key == "Naan") {
+          if (key == "Antibiotics") {
             const boxb = this.svg
               .append("image")
               .attr("x", this.warehouse.x + size)
@@ -589,7 +589,7 @@ export default {
               .attr("y", target.y + 0.3 * size)
               .on("end", () => boxbt.remove());
           }
-          if (key == "Paneer") {
+          if (key == "Paracetamol") {
             const boxc = this.svg
               .append("image")
               .attr("x", this.warehouse.x - size)
@@ -622,7 +622,7 @@ export default {
               .attr("y", target.y + 0.3 * size)
               .on("end", () => boxct.remove());
           }
-          if (key == "Masala Chai") {
+          if (key == "Vitamins") {
             const boxd = this.svg
               .append("image")
               .attr("x", this.warehouse.x - size)
