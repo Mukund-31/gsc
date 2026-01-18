@@ -84,10 +84,13 @@ The \"specific_reason_of_replenishment\" means the specific reason of replenishm
 The current storage amount of the outlet should be less than the maximum capacity of the warehouse of the outlet.
 While making decisions, the central hub should first consider the neccessary information in the context, and then predict what is the unknown demand of outlet in the event.
 """
-    task_prompt = "In order to help the outlet to handle the upcoming events well, " + \
-        "please make decisions based on the known information (you need to show the basis and the thoughts specifically). " + \
-        "The standard of the task completion is that the AI assistant (Event Logistics Coordinator of Outlet) MUST make sure every BLANKs in the JSON template are filled with certain values. " + \
-        "IMPORTANT: If the event description implies higher demand, you MUST increase the 'future_storage_amount' to be significantly higher than 'current_storage_amount'."
+    task_prompt = "Fill the JSON template with ACTUAL NUMBERS. For each product:\n" + \
+        "1. If event implies HIGH demand: future_storage_amount = current + (2-3x daily_replenishment)\n" + \
+        "2. If event implies NORMAL demand: future_storage_amount = current + daily_replenishment\n" + \
+        "3. Never exceed max_warehouse_capacity\n" + \
+        "4. Provide a brief reason (1 sentence)\n\n" + \
+        "Example: If current=100, daily=30, high demand event → future=160 to 190\n" + \
+        "DO NOT explain steps. ONLY output the filled JSON template."
 
     answer_template = "===== JSON TEMPLATE =====\n"
     answer_template += json.dumps(response_json, indent=4)
