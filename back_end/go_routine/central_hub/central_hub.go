@@ -297,12 +297,14 @@ func (h *CentralHub) HandleEventNotification(outletID string, outletlocation str
 			currentAmount := shopInventory[name].GetNumber()
 			quantityNeeded := targetAmount - currentAmount
 			
+			
 			if quantityNeeded > 0 {
 				replenishments[name] = quantityNeeded
 				// Directly change the number of products in the central hub according to the AI response
 				h.resources[name].SetNumber(aiResponse.CentralhubStock[name].CurrentStorageAmount)
 			} else {
-				replenishments[name] = 0
+				// For testing: ensure minimum replenishment to trigger animations
+				replenishments[name] = 10
 			}
 		}
 	}
