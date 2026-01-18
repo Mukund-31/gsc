@@ -14,10 +14,10 @@ var GlobalProducts []Product
 
 func InstanceProducts() {
 	GlobalProducts = []Product{
-		{productID: "Olive Oil", quantity: 100, replenishmentRate: 30, max_stock: 500},
-		{productID: "Baguette", quantity: 200, replenishmentRate: 50, max_stock: 300},
-		{productID: "Manchego Cheese", quantity: 150, replenishmentRate: 40, max_stock: 400},
-		{productID: "Black Tea", quantity: 80, replenishmentRate: 20, max_stock: 250},
+		{productID: "Ghee", quantity: 100, replenishmentRate: 30, max_stock: 500},
+		{productID: "Naan", quantity: 200, replenishmentRate: 50, max_stock: 300},
+		{productID: "Paneer", quantity: 150, replenishmentRate: 40, max_stock: 400},
+		{productID: "Masala Chai", quantity: 80, replenishmentRate: 20, max_stock: 250},
 	}
 	// Add any additional logic if required
 }

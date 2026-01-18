@@ -27,7 +27,7 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2">Outlet 1</th>
+              <th colspan="2">Mumbai</th>
             </tr>
           </thead>
           <tbody>
@@ -42,7 +42,7 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2">Outlet 2</th>
+              <th colspan="2">Delhi</th>
             </tr>
           </thead>
           <tbody>
@@ -57,7 +57,7 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2">Outlet 3</th>
+              <th colspan="2">Bangalore</th>
             </tr>
           </thead>
           <tbody>
@@ -72,7 +72,7 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2">Outlet 4</th>
+              <th colspan="2">Kolkata</th>
             </tr>
           </thead>
           <tbody>
@@ -86,16 +86,16 @@
     </div>
     <div class="communication">
       <button @click="toggleMessages1(1)" class="toggle-button show1">
-        Outlet 1
+        Mumbai (AI Chat)
       </button>
       <button @click="toggleMessages2(1)" class="toggle-button show2">
-        Outlet 2 
+        Delhi (AI Chat)
       </button>
       <button @click="toggleMessages3(1)" class="toggle-button show3">
-        Outlet 3 
+        Bangalore (AI Chat) 
       </button>
       <button @click="toggleMessages4(1)" class="toggle-button show4">
-        Outlet 4
+        Kolkata (AI Chat)
       </button>
       <div class="event">
         <p class="event1">{{ event1 }}</p>
@@ -140,34 +140,34 @@ export default {
   data() {
     return {
       stock0: new Map([
-        ["Baguette", 0],
-        ["Black Tea", 0],
-        ["Manchego Cheese", 0],
-        ["Olive Oil", 0],
+        ["Naan", 0],
+        ["Masala Chai", 0],
+        ["Paneer", 0],
+        ["Ghee", 0],
       ]),
       stock1: new Map([
-        ["Baguette", 0],
-        ["Black Tea", 0],
-        ["Manchego Cheese", 0],
-        ["Olive Oil", 0],
+        ["Naan", 0],
+        ["Masala Chai", 0],
+        ["Paneer", 0],
+        ["Ghee", 0],
       ]),
       stock2: new Map([
-        ["Baguette", 0],
-        ["Black Tea", 0],
-        ["Manchego Cheese", 0],
-        ["Olive Oil", 0],
+        ["Naan", 0],
+        ["Masala Chai", 0],
+        ["Paneer", 0],
+        ["Ghee", 0],
       ]),
       stock3: new Map([
-        ["Baguette", 0],
-        ["Black Tea", 0],
-        ["Manchego Cheese", 0],
-        ["Olive Oil", 0],
+        ["Naan", 0],
+        ["Masala Chai", 0],
+        ["Paneer", 0],
+        ["Ghee", 0],
       ]),
       stock4: new Map([
-        ["Baguette", 0],
-        ["Black Tea", 0],
-        ["Manchego Cheese", 0],
-        ["Olive Oil", 0],
+        ["Naan", 0],
+        ["Masala Chai", 0],
+        ["Paneer", 0],
+        ["Ghee", 0],
       ]),
       onedaytime: 60000, // 60s/day
       date: null,
@@ -523,7 +523,7 @@ export default {
             }
           }, this.onedaytime);
 
-          if (key == "Olive Oil") {
+          if (key == "Ghee") {
             const boxa = this.svg
               .append("image")
               .attr("x", this.warehouse.x + size)
@@ -556,7 +556,7 @@ export default {
               .attr("y", target.y + 2.3 * size)
               .on("end", () => boxat.remove());
           }
-          if (key == "Baguette") {
+          if (key == "Naan") {
             const boxb = this.svg
               .append("image")
               .attr("x", this.warehouse.x + size)
@@ -589,7 +589,7 @@ export default {
               .attr("y", target.y + 0.3 * size)
               .on("end", () => boxbt.remove());
           }
-          if (key == "Manchego Cheese") {
+          if (key == "Paneer") {
             const boxc = this.svg
               .append("image")
               .attr("x", this.warehouse.x - size)
@@ -622,7 +622,7 @@ export default {
               .attr("y", target.y + 0.3 * size)
               .on("end", () => boxct.remove());
           }
-          if (key == "Black Tea") {
+          if (key == "Masala Chai") {
             const boxd = this.svg
               .append("image")
               .attr("x", this.warehouse.x - size)

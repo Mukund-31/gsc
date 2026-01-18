@@ -3,6 +3,10 @@ node_modules
 .pnp
 .pnp.js
 
+# Custom Tools & binaries (Too large for GitHub)
+tools/
+*.app
+
 # Python
 venv/
 __pycache__/
