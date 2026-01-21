@@ -2,7 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Dashboard = () => {
-  const [data, setData] = useState({ warehouse: null, outlets: [], date: '' });
+  const [data, setData] = useState({
+    warehouse: { Name: "Central Medical Depot", Inventory: { "Antibiotics": 5000, "Painkillers": 10000, "Vaccines": 2000, "Bandages": 5000 } },
+    outlets: [
+      { id: "Outlet-1", Name: "City General Hospital", Inventory: { "Antibiotics": 50, "Painkillers": 100, "Vaccines": 20, "Bandages": 200 } },
+      { id: "Outlet-2", Name: "Community Clinic South", Inventory: { "Antibiotics": 50, "Painkillers": 100, "Vaccines": 20, "Bandages": 200 } },
+      { id: "Outlet-3", Name: "University Medical Center", Inventory: { "Antibiotics": 50, "Painkillers": 100, "Vaccines": 20, "Bandages": 200 } },
+      { id: "Outlet-4", Name: "Metro Pharmacy", Inventory: { "Antibiotics": 50, "Painkillers": 100, "Vaccines": 20, "Bandages": 200 } }
+    ],
+    date: '2024-01-01'
+  });
   const [outletLogs, setOutletLogs] = useState({
     'Outlet-1': [],
     'Outlet-2': [],
@@ -10,29 +19,37 @@ const Dashboard = () => {
     'Outlet-4': []
   });
   const [shipments, setShipments] = useState([]);
+  const [connected, setConnected] = useState(false);
   const ws = useRef(null);
 
   useEffect(() => {
     ws.current = new WebSocket('ws://localhost:8080/ws');
 
+    ws.current.onopen = () => {
+      console.log('WebSocket connected');
+      setConnected(true);
+    };
+
     ws.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
       if (message.type === 'state') {
-        setData({
-          warehouse: message.warehouse,
-          outlets: message.outlets,
+        setData(prev => ({
+          ...prev,
           date: message.date,
-        });
+          // Only update warehouse/outlets if provided in message
+          warehouse: message.warehouse || prev.warehouse,
+          outlets: message.outlets || prev.outlets,
+        }));
       } else if (message.type === 'log') {
         // Parse log to determine which outlet it belongs to
         const logText = message.message;
         let outletId = null;
 
         // Check which outlet this log is for
-        if (logText.includes('Outlet North') || logText.includes('Outlet-1')) outletId = 'Outlet-1';
-        else if (logText.includes('Outlet South') || logText.includes('Outlet-2')) outletId = 'Outlet-2';
-        else if (logText.includes('Outlet East') || logText.includes('Outlet-3')) outletId = 'Outlet-3';
-        else if (logText.includes('Outlet West') || logText.includes('Outlet-4')) outletId = 'Outlet-4';
+        if (logText.includes('City General') || logText.includes('Outlet-1')) outletId = 'Outlet-1';
+        else if (logText.includes('Community Clinic') || logText.includes('Outlet-2')) outletId = 'Outlet-2';
+        else if (logText.includes('University Medical') || logText.includes('Outlet-3')) outletId = 'Outlet-3';
+        else if (logText.includes('Metro Pharmacy') || logText.includes('Outlet-4')) outletId = 'Outlet-4';
 
         if (outletId) {
           setOutletLogs((prev) => ({
@@ -54,16 +71,21 @@ const Dashboard = () => {
     return () => ws.current.close();
   }, []);
 
-  if (!data.warehouse) return <div className="text-white text-center mt-20">Connecting to Supply Chain OS... (Ensure Go Backend is running)</div>;
+  if (!connected) return <div className="text-white text-center mt-20">Connecting to Supply Chain OS... (Ensure Go Backend is running)</div>;
 
   return (
     <div className="min-h-screen bg-slate-900 text-white p-8 font-sans overflow-hidden">
       <header className="mb-8 flex justify-between items-center z-10 relative">
         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
-          Responsive AI Clusters (Google A2A Protocol)
+          Responsive AI Clusters (Pharma Supply Chain)
         </h1>
-        <div className="text-xl font-mono text-emerald-300">
-          Date: {data.date}
+        <div className="flex flex-col items-end">
+          <div className="text-xl font-mono text-emerald-300">
+            Date: {data.date}
+          </div>
+          <div className="text-xs bg-blue-900/50 px-2 py-1 rounded border border-blue-500/50 mt-1">
+            PROTOCOL: <span className="font-bold text-white">A2A (JSON-RPC)</span> | AUTONOMOUS
+          </div>
         </div>
       </header>
 
@@ -79,13 +101,13 @@ const Dashboard = () => {
         {/* Top Left - Outlet 1 with Chat */}
         <div className="absolute top-0 left-0 w-80 z-10">
           <OutletCard outlet={data.outlets[0]} id="Outlet-1" />
-          <ConversationBox outletId="Outlet-1" logs={outletLogs['Outlet-1']} name="North" />
+          <ConversationBox outletId="Outlet-1" logs={outletLogs['Outlet-1']} name="City General Hospital" />
         </div>
 
         {/* Top Right - Outlet 2 with Chat */}
         <div className="absolute top-0 right-0 w-80 z-10">
           <OutletCard outlet={data.outlets[1]} id="Outlet-2" />
-          <ConversationBox outletId="Outlet-2" logs={outletLogs['Outlet-2']} name="South" />
+          <ConversationBox outletId="Outlet-2" logs={outletLogs['Outlet-2']} name="Community Clinic South" />
         </div>
 
         {/* Center Warehouse */}
@@ -96,13 +118,13 @@ const Dashboard = () => {
         {/* Bottom Left - Outlet 3 with Chat */}
         <div className="absolute bottom-0 left-0 w-80 z-10">
           <OutletCard outlet={data.outlets[2]} id="Outlet-3" />
-          <ConversationBox outletId="Outlet-3" logs={outletLogs['Outlet-3']} name="East" />
+          <ConversationBox outletId="Outlet-3" logs={outletLogs['Outlet-3']} name="University Medical Center" />
         </div>
 
         {/* Bottom Right - Outlet 4 with Chat */}
         <div className="absolute bottom-0 right-0 w-80 z-10">
           <OutletCard outlet={data.outlets[3]} id="Outlet-4" />
-          <ConversationBox outletId="Outlet-4" logs={outletLogs['Outlet-4']} name="West" />
+          <ConversationBox outletId="Outlet-4" logs={outletLogs['Outlet-4']} name="Metro Pharmacy" />
         </div>
 
         {/* Connecting Lines (Visual only) */}
@@ -122,13 +144,28 @@ const Dashboard = () => {
 const ConversationBox = ({ outletId, logs, name }) => {
   if (logs.length === 0) return null;
 
+  const renderLog = (log) => {
+    // Highlight specific phrases to visualize Protocol Logic
+    if (log.includes("Analysis:")) return <span className="text-cyan-300 block border-l-2 border-cyan-500 pl-2">{log}</span>;
+    if (log.includes("Reasoning:")) return <span className="text-yellow-200 block border-l-2 border-yellow-500 pl-2">{log}</span>;
+    if (log.includes("Proposal:")) return <span className="text-yellow-400 block ml-2 font-bold">{log}</span>;
+    if (log.includes("Agreement reached")) return <span className="text-green-400 block font-bold border-l-2 border-green-500 pl-2">{log}</span>;
+    if (log.includes("Recall")) return <span className="text-red-400 block font-bold border-l-2 border-red-500 pl-2">{log}</span>;
+    if (log.includes("Event:")) return <span className="text-purple-300 block font-bold mb-1">{log}</span>;
+    if (log.includes("Request:")) return <span className="text-orange-300 block ml-2">{log}</span>;
+    return <span className="text-emerald-300/80">{log}</span>;
+  };
+
   return (
-    <div className="mt-2 bg-black/90 p-3 rounded-lg border border-blue-500/30 max-h-48 overflow-y-auto">
-      <h4 className="text-xs font-bold text-blue-400 mb-2">💬 {name} A2A Chat</h4>
-      <div className="flex flex-col gap-2">
+    <div className="mt-2 bg-black/90 p-3 rounded-lg border border-blue-500/30 max-h-64 overflow-y-auto shadow-2xl backdrop-blur-sm">
+      <h4 className="text-xs font-bold text-blue-400 mb-2 flex items-center gap-2">
+        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+        A2A LOGS: {name}
+      </h4>
+      <div className="flex flex-col gap-3">
         {logs.map((log, i) => (
-          <div key={i} className="text-xs font-mono whitespace-pre-wrap">
-            <span className="text-emerald-300">{log}</span>
+          <div key={i} className="text-[10px] md:text-xs font-mono whitespace-pre-wrap leading-relaxed">
+            {renderLog(log)}
           </div>
         ))}
       </div>

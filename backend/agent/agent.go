@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"time"
 )
 
 // InventoryItem represents an item in the inventory
@@ -62,6 +64,9 @@ func NewOllamaClient(baseURL, model string) *OllamaClient {
 func (c *OllamaClient) Generate(prompt string) (string, error) {
 	url := fmt.Sprintf("%s/api/generate", c.BaseURL)
 	
+	log.Printf("[Ollama] Sending request to %s (model: %s)", url, c.Model)
+	startTime := time.Now()
+	
 	payload := map[string]interface{}{
 		"model":  c.Model,
 		"prompt": prompt,
@@ -75,6 +80,7 @@ func (c *OllamaClient) Generate(prompt string) (string, error) {
 	
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
+		log.Printf("[Ollama] Request failed after %v: %v", time.Since(startTime), err)
 		return "", err
 	}
 	defer resp.Body.Close()
@@ -83,6 +89,8 @@ func (c *OllamaClient) Generate(prompt string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	
+	log.Printf("[Ollama] Response received in %v", time.Since(startTime))
 	
 	var result map[string]interface{}
 	if err := json.Unmarshal(body, &result); err != nil {
@@ -93,6 +101,13 @@ func (c *OllamaClient) Generate(prompt string) (string, error) {
 	if !ok {
 		return "", fmt.Errorf("invalid response format")
 	}
+	
+	// Log first 100 chars of response
+	preview := response
+	if len(preview) > 100 {
+		preview = preview[:100] + "..."
+	}
+	log.Printf("[Ollama] AI Response: %s", preview)
 	
 	return response, nil
 }

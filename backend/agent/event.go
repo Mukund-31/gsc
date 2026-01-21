@@ -15,27 +15,27 @@ var GlobalEvents = []Event{
 	// January Events
 	{
 		Date:        time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
-		Description: "New Year's Day - High demand for party supplies and groceries",
+		Description: "New Year's Emergency - High trauma admissions in ER",
 		OutletID:    "Outlet-1",
 	},
 	{
 		Date:        time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
-		Description: "New Year's Day - Closed for holiday, prepare for reopening",
+		Description: "Holiday Staffing - Urgent need for basic supplies",
 		OutletID:    "Outlet-2",
 	},
 	{
 		Date:        time.Date(2024, 1, 5, 0, 0, 0, 0, time.UTC),
-		Description: "First Weekend - Restock required for weekend shoppers",
+		Description: "Flu Season Warning - Anticipate spike in Antibiotics demand",
 		OutletID:    "Outlet-3",
 	},
 	{
 		Date:        time.Date(2024, 1, 8, 0, 0, 0, 0, time.UTC),
-		Description: "Monday Rush - Office supplies and electronics low",
+		Description: "Vaccination Drive - Community outreach program starting",
 		OutletID:    "Outlet-4",
 	},
 	{
 		Date:        time.Date(2024, 1, 12, 0, 0, 0, 0, time.UTC),
-		Description: "Mid-month Sale Preparation - Stock up for promotional event",
+		Description: "Major Surgery Week - Bandages and Painkillers low",
 		OutletID:    "Outlet-1",
 	},
 	// February Events
@@ -164,4 +164,17 @@ var GlobalEvents = []Event{
 		Description: "New Year's Eve - Party supplies final rush",
 		OutletID:    "Outlet-4",
 	},
+}
+
+// GetEventsForDate returns all events scheduled for a specific date
+func GetEventsForDate(date time.Time) []Event {
+	var events []Event
+	for _, evt := range GlobalEvents {
+		if evt.Date.Year() == date.Year() &&
+			evt.Date.Month() == date.Month() &&
+			evt.Date.Day() == date.Day() {
+			events = append(events, evt)
+		}
+	}
+	return events
 }
